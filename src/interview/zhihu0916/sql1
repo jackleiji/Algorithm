@@ -1,0 +1,45 @@
+DROP TABLE IF EXISTS  `answer_score_tb`;
+
+CREATE TABLE IF NOT EXISTS answer_score_tb (
+    id int(4) NOT NULL COMMENT '自增id',
+    user_id int(4) NOT NULL COMMENT '用户id',
+    question_id int(4) NOT NULL COMMENT '问题id',
+    answer_id int(4) NOT NULL COMMENT '回答id',
+    start_time VARCHAR(255) NOT NULL COMMENT '回答时间',
+    submit_time VARCHAR(255) NOT NULL COMMENT '回答时间',
+    answer_score int(4) NOT NULL COMMENT '回答质量分'
+);
+
+
+INSERT answer_score_tb VALUES(1,1006,10231,9003,'2023-07-07 10:01:01','2023-07-07 10:21:02',88);
+INSERT answer_score_tb VALUES(2,1006,10231,9001,'2023-07-01 12:11:01','2023-07-01 12:31:01',89);
+INSERT answer_score_tb VALUES(3,1006,10231,9003,'2023-07-02 08:32:01','2023-07-02 08:34:01',76);
+INSERT answer_score_tb VALUES(4,1006,10231,9004,'2023-07-03 10:23:45','2023-07-03 10:35:34',65);
+INSERT answer_score_tb VALUES(5,1006,10231,9003,'2023-07-03 14:13:25','2023-07-03 15:35:54',68);
+INSERT answer_score_tb VALUES(6,1006,10231,9002,'2023-07-06 10:01:01','2023-07-06 10:21:01',81);
+INSERT answer_score_tb VALUES(7,1005,10231,9002,'2023-07-05 10:01:01','2023-07-05 10:21:01',83);
+INSERT answer_score_tb VALUES(8,1005,10231,9001,'2023-07-05 10:31:01','2023-07-05 10:51:01',81);
+
+INSERT answer_score_tb VALUES(9,1005,10231,9005,'2023-07-10 10:01:01','2023-07-10 10:21:01',56);
+INSERT answer_score_tb VALUES(10,1005,10231,9006,'2023-07-10 16:24:01','2023-07-10 16:51:01',45);
+INSERT answer_score_tb VALUES(11,1005,10231,9007,'2023-07-11 16:14:21','2023-07-11 16:16:15',60);
+INSERT answer_score_tb VALUES(12,1005,10231,9008,'2023-07-11 16:18:01','2023-07-11 16:18:01',63);
+INSERT answer_score_tb VALUES(13,1007,10231,9005,'2023-07-10 16:28:01','2023-07-10 16:32:01',74);
+INSERT answer_score_tb VALUES(14,1007,10231,9006,'2023-07-12 16:29:01','2023-07-12 16:38:01',62);
+INSERT answer_score_tb VALUES(15,1007,10231,9007,'2023-07-13 16:35:01','2023-07-13 16:45:01',71);
+INSERT answer_score_tb VALUES(16,1007,10231,9008,'2023-07-14 16:30:01','2023-07-14 16:57:01',82);
+
+SELECT *
+FROM(
+	SELECT user_id,DIFF,
+		row_number() over(PARTITION BY user_id ORDER BY DIFF DESC) subD
+	FROM(
+		SELECT user_id,DATEDIFF(submit_time,lagST) DIFF
+		FROM(
+			SELECT user_id,DATE_FORMAT(submit_time,'%Y-%m-%d') submit_time,
+				DATE_FORMAT(lag(submit_time) over(PARTITION BY user_id ORDER BY submit_time),'%Y-%m-%d') lagST
+			FROM answer_score_tb
+		)t
+	)t
+)t
+WHERE subD=1;

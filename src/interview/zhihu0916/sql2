@@ -1,0 +1,44 @@
+DROP TABLE IF EXISTS `room_user_action_log`;
+
+CREATE TABLE IF NOT EXISTS `room_user_action_log`(
+    room_id INT(4) NOT NULL COMMENT '房间id',
+    user_id INT(4) NOT NULL COMMENT '用户id',
+    action VARCHAR(100) NOT NULL COMMENT '用户的执行动作',
+    action_time VARCHAR(255) NOT NULL COMMENT '用户的执行时间'
+);
+INSERT INTO room_user_action_log values(1,1,'enter',1691648946);
+INSERT INTO room_user_action_log values(2,2,'enter',1691648950);
+INSERT INTO room_user_action_log values(1,1,'enter',1691909038);
+INSERT INTO room_user_action_log values(1,1,'enter',1691909195);
+INSERT INTO room_user_action_log values(1,1,'enter',1691909209);
+INSERT INTO room_user_action_log values(2,2,'enter',1691909241);
+INSERT INTO room_user_action_log values(2,2,'enter',1691909295);
+INSERT INTO room_user_action_log values(2,2,'enter',1691648950);
+INSERT INTO room_user_action_log values(2,2,'enter',1691909306);
+INSERT INTO room_user_action_log values(3,3,'enter',1691907093);
+INSERT INTO room_user_action_log values(3,3,'enter',1691909335);
+INSERT INTO room_user_action_log values(3,3,'enter',1691909343);
+INSERT INTO room_user_action_log values(3,3,'enter',1691909354);
+INSERT INTO room_user_action_log values(3,3,'enter',1691909363);
+INSERT INTO room_user_action_log values(3,3,'enter',1691909371);
+INSERT INTO room_user_action_log values(1,1,'quit',1691650000);
+INSERT INTO room_user_action_log values(2,2,'quit',1691650001);
+INSERT INTO room_user_action_log values(3,3,'quit',1691907216);
+
+//查询每个房间最大浏览量
+SELECT user_id,sumNumb,date1
+FROM(
+	SELECT user_id,sumNumb,date1,
+		row_number() over(PARTITION BY user_id ORDER BY sumNumb DESC) rn
+	FROM(
+		SELECT user_id,
+			SUM(numb) over(PARTITION BY user_id ORDER BY date1) sumNumb,
+			date1
+		FROM(
+			SELECT user_id,IF(ACTION='enter',1,-1) numb,
+				DATE_FORMAT(FROM_UNIXTIME(action_time),'%Y-%m-%d %h:%i:%s') date1
+			FROM room_user_action_log
+		) AS t1
+	)t2
+) t3
+WHERE rn=1;
