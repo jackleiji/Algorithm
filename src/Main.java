@@ -1,5 +1,5 @@
-import leetcode.solution.Solution136;
-import leetcode.solution.Solution169;
+import leetcode.Solution136;
+import leetcode.Solution169;
 import org.junit.Test;
 
 import java.io.IOException;
