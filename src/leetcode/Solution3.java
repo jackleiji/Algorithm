@@ -22,6 +22,7 @@ public class Solution3 {
             Character temp = s.charAt(r);
             map.put(temp,map.getOrDefault(temp,0)+1);
             r++;
+            //注意复制的是否修改了对象名，不够细心。
             while (map.get(temp)>1 && l<=r && l<len){
                 Character lTemp = s.charAt(l);
                 map.put(lTemp,map.getOrDefault(lTemp,0)-1);
